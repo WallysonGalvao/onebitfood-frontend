@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { Column } from 'rbx';
-import store from '../../store';
+import { Column } from "rbx";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import Restaurant from "./restaurant.js";
+import { loadRestaurants } from "../../actions/restaurant";
 
 class ListRestaurants extends Component {
 
     componentWillMount() {
-        this.restaurants = store.getState()['restaurantsState'];
+        this.props.loadRestaurants();
     }
-
 
     render() {
         return (
@@ -18,7 +19,7 @@ class ListRestaurants extends Component {
 
                 <Column.Group multiline gapSize={2}>
                     {
-                        this.restaurants.map(restaurant => {
+                        this.props.restaurants.map(restaurant => {
                             return <Restaurant {...restaurant} />
                         })
                     }
@@ -28,4 +29,11 @@ class ListRestaurants extends Component {
     }
 }
 
-export default ListRestaurants;
+const mapStateToProps = store => ({
+    restaurants: store.restaurantsState.restaurants,
+    /* address: store.addressState.address */
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({ loadRestaurants }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListRestaurants);
